@@ -1,20 +1,28 @@
 var categoryModel = require('../models/category'),
     subCategoryModel = require('../models/subCategory'),
-    subSubCategoryModel = require('../models/subSubCategory');
+    subSubCategoryModel = require('../models/subSubCategory'),
+    productsModel = require('../models/products');
 
 class ApiController {
 
     async categories(req, res) {
 
-        const regExp = new RegExp(req.query.term, 'i')
+        let q = {};
+        let products = {};
 
-        let categories = await categoryModel.find({name :   regExp });
-        let subCategories = await subCategoryModel.find({name :   regExp });
-        let subSubCategories = await subSubCategoryModel.find({name :   regExp });
+        if (req.query.term) {
+            q.name = new RegExp(req.query.term, 'i');
+            products = await productsModel.find(q)
+        }
 
-        const result = [...categories,...subCategories,...subSubCategories];
 
-        res.json({ categories: result});
+        let categories = await categoryModel.find(q);
+        let subCategories = await subCategoryModel.find(q);
+        let subSubCategories = await subSubCategoryModel.find(q);
+
+        const result = [...categories, ...subCategories, ...subSubCategories];
+
+        res.json({categories: result, products: products});
     }
 
 }
