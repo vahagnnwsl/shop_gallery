@@ -98,13 +98,13 @@
         </div>
         <div class="row mt-5 gallery">
             <div :class="viewMode" v-for="(item, index) in detailData.images" :key="index">
-                
+
                 <a :href="item">
                     <img :src="item" alt="image" width="100%" class="p-2">
                 </a>
                 <div v-if="viewMode != 'col-2'">
                     <p class="detail-name pl-2 m-0">{{item.split('/')[item.split('/').length-1]}}</p>
-                    <p class="detail-date pl-2 m-0">{{changeDateformat(detailData.created_at)}}</p>         
+                    <p class="detail-date pl-2 m-0">{{changeDateformat(detailData.created_at)}}</p>
                 </div>
             </div>
         </div>
@@ -179,8 +179,8 @@
                         this.products = res.data;
                         if (res.productsCount) {
                             this.productsCount = res.productsCount;
-                            let reminder = this.productsCount % 24 == 0 ? 0 : 1;
-                            this.totalPageNum = Math.floor(this.productsCount / 24) + reminder
+                            let reminder = this.productsCount % 100 == 0 ? 0 : 1;
+                            this.totalPageNum = Math.floor(this.productsCount / 100) + reminder
                         };
                         this.getPaginationArray(page);
                         this.loader.hide()

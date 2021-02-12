@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var mongoosePaginate = require('mongoose-paginate');
 
 var products = mongoose.Schema({
     categoryID: {
@@ -39,4 +40,6 @@ var products = mongoose.Schema({
     }
 }
 )
+products.plugin(mongoosePaginate);
+
 module.exports = mongoose.model('products', products);

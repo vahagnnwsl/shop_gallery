@@ -445,8 +445,8 @@
                         this.products = res.data;
                         if (res.productsCount) {
                             this.productsCount = res.productsCount;
-                            let reminder = this.productsCount % 24 == 0 ? 0 : 1;
-                            this.totalPageNum = Math.floor(this.productsCount / 24) + reminder
+                            let reminder = this.productsCount % 100 == 0 ? 0 : 1;
+                            this.totalPageNum = Math.floor(this.productsCount / 100) + reminder
                         };
                         this.getPaginationArray(page);
                         this.loader.hide()

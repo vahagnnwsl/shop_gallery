@@ -6,13 +6,13 @@
   <br>
   <div class="row">
     <div class="col-md-6 searchdiv" >
-      <input type="text" v-model="searchCategory" id="searchCategory" name="searchCategory" placeholder="Search category...">
+      <input type="text" v-model="searchCategory" id="searchCategory" @change="search" placeholder="Search...">
     </div>
     
   </div>
 
   <div class="mt-3 row" v-if="categoryData.length">
-    <div v-for="(item, index) in filteredList" :key="index" class="col-md-4 col-sm-6 col-xs-12 mt-3">
+    <div v-for="(item, index) in categoryData" :key="index" class="col-md-4 col-sm-6 col-xs-12 mt-3">
       <div class="card">
         <div class="view overlay">
           <img class="card-img-top" :src="item.imageUrl" alt="Card image cap">
@@ -27,7 +27,64 @@
       </div>
     </div>
   </div>
+  <div class="row mt-4">
+    <h1 class="w-100 mt-3 pl-3 border-bottom text-info" v-if="productsData.length">Products</h1>
+
+    <div v-for="(item, index) in productsData" :key="index" class="col-6 col-sm-4 col-md-3 mb-2">
+      <div class="card">
+        <div class="view overlay">
+          <img class="card-img-top" :src="item.images[item.cover!==undefined?item.cover:0]" height="170" alt="Card image cap">
+          <a :href="'/category/'+item.categoryID+'/subCategory/'+item.subCategoryID+'/subSubCategory/'+item.subSubCategoryID">
+            <div class="mask rgba-white-slight"></div>
+          </a>
+        </div>
+        <div class="rounded-bottom mdb-color lighten-3 text-center pt-3">
+          <ul class="list-unstyled list-inline font-small m-0">
+            <li class="list-inline-item pr-2 text-white float-left ml-3">
+              <p class="small">{{item.name}}</p>
+            </li>
+            <li class="list-inline-item float-right mr-2">
+              <p class="white-text small"><i class="fas fa-images mr-2"></i>{{item.images.length}}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex mt-4" v-if="productsData.length">
+    <nav aria-label="Page navigation example" class="m-auto">
+      <ul class="pagination pagination-circle pg-blue">
+        <li class="page-item" :class="currentPage == 1 ? 'disabled': ''">
+          <a class="page-link" @click.prevent="setPage(1)">First</a>
+        </li>
+
+        <li class="page-item" :class="currentPage == 1 ? 'disabled': ''">
+          <a class="page-link" aria-label="Previous" @click.prevent="setPage(currentPage - 1)">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+          </a>
+        </li>
+
+
+        <li class="page-item" v-if="showPages().includes(index)" v-for="(item, index) in totalPage"
+            :class="item==currentPage?'active':''"
+            :key="index"><a class="page-link" @click.prevent="setPage(item)">{{item}}</a></li>
+
+        <li class="page-item" :class="currentPage == totalPage ? 'disabled': ''">
+          <a class="page-link" aria-label="Next" @click.prevent="setPage(currentPage + 1)">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+        </li>
+        <li class="page-item" :class="currentPage == totalPage ? 'disabled': ''"><a class="page-link"
+                                                                                    @click.prevent="setPage(totalPage)">Last</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
   <vue-snotify></vue-snotify>
+
 </div>
 <script>
   new Vue({
@@ -36,15 +93,30 @@
       return {
         loader: {},
         categoryData: [],
-        searchCategory:''
+        searchCategory:'',
+        term:'',
+        currentPage : 1,
+        totalPage: 0,
+        productsData: [],
+        index : 0,
+        detailData :{},
+        detailMode:false,
+        viewMode: 'col-3',
+
+
       }
     },
-    computed:{
-        filteredList(){
-          return this.categoryData.filter(item=>item.name.toLowerCase().includes(this.searchCategory.toLowerCase())==true)
+
+    methods: {
+      search(event) {
+        if (event.target.value.length > 2 || event.target.value.length === 0) {
+          this.term = event.target.value;
+          this.currentPage = 1;
+          this.get_products()
+          this.getCategory()
         }
       },
-    methods: {
+
       openLoader() {
         this.loader = this.$loading.show({
           loader: 'dots',
@@ -53,29 +125,67 @@
           transparence: 0.5
         });
       },
-      
       getCategory() {
-        this.openLoader()
+        var self = this;
         $.ajax({
           method: "GET",
-          url: "getCategory",
-        }).done((res) => {
-          this.loader.hide()
-          if (res.status) {
-            console.log("getCategory -> res.data", res.data)
-            this.categoryData = res.data
-          } else {
-            this.Snotify.error(res.msg, {
-              position: 'rightTop'
-            })
+          url: `/api/categories?term=${self.term}`,
+          success: function (data) {
+            self.categoryData = data.categories
+            console.log(self.categoryData)
+          },
+          beforeSend: function () {
+            // self.openLoader();
+          },
+          complete: function () {
+            // self.loader.hide();
           }
-        })
+        });
 
-      }
+      },
+      showPages() {
+        var array = [];
+
+        let min = this.currentPage - 4;
+        let max = this.currentPage + 4;
+        if ( this.currentPage  <4){
+          max =8;
+        }
+
+        for (let x = min; x <= max; x++) {
+          if (x => 0) {
+            array.push(x);
+          }
+        }
+        return array;
+      },
+      setPage: function (page) {
+        this.currentPage = page;
+        this.get_products()
+      },
+      get_products: function () {
+        var self = this;
+        $.ajax({
+          method: "GET",
+          url: `/api/products?term=${self.term}&page=${self.currentPage}`,
+          success: function (data) {
+            self.productsData = data.products.docs
+            self.totalPage = Math.round(data.products.total / 100);
+            console.log(self.totalPage)
+          },
+          beforeSend: function () {
+            self.openLoader();
+          },
+          complete: function () {
+            self.loader.hide();
+          }
+        });
+      },
     },
     mounted() {
       setTimeout(() => {
         this.getCategory()
+        this.get_products()
       }, 200);
     },
   })

@@ -104,11 +104,11 @@ class mainController {
             
             if(!name){
                 productsCount = total.length;
-                products = total.slice(0, 24);
+                products = total.slice(0, 100);
             }else{
 
                 productsCount = filtered.length;
-                products = filtered.slice(0, 24);
+                products = filtered.slice(0, 100);
             }
             //let productsCount = await productsModel.find({ categoryID, subCategoryID, subSubCategoryID }).countDocuments()
             //let products = await productsModel.find({ categoryID, subCategoryID, subSubCategoryID }).limit(24)
@@ -116,9 +116,9 @@ class mainController {
         } else {
             //let products = await productsModel.find({ categoryID, subCategoryID, subSubCategoryID }).skip((page - 1) * 24).limit(24)
             if(!name){
-                products = total.slice((page-1)*24, page*24);
+                products = total.slice((page-1)*100, page*100);
             }else{
-                products = filtered.slice((page-1)*24, page*24);
+                products = filtered.slice((page-1)*100, page*100);
             }
             res.json({ status: true, data: products });
         }
