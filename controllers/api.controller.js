@@ -98,9 +98,8 @@ class ApiController {
         await bunnyStorage.upload(image, key);
 
 
-        console.log(req.body.id)
-        console.log(req.body.type)
-        model.imageUrl = `${process.env.PULL_ZONE_URL}${key}`
+
+        model.imageUrl = `https://fashinbutikskw.b-cdn.net/${key}`
         await model.save();
 
         res.json({status: `${process.env.PULL_ZONE_URL}${key}`});
