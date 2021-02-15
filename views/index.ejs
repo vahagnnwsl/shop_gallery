@@ -2,7 +2,8 @@
 
 
 <div class="home-wrap" id="category">
-    <div class="modal fade" id="moveModal" tabindex="-1" role="dialog" aria-labelledby="moveModalLabel" aria-hidden="true">
+    <div class="modal fade" id="moveModal" tabindex="-1" role="dialog" aria-labelledby="moveModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -15,16 +16,24 @@
                     <div class="form-group">
                         <label for="path">Path</label>
                         <div name="path">
-                            <select v-model="batchCategory" style="width: 30%;" @change="onBatchCategoryChange($event)" >
-                                <option v-if="categories" v-for="cat in categories" v-bind:value="cat.categoryID">{{cat.name}}</option>
+                            <select v-model="batchCategory" style="width: 30%;" @change="onBatchCategoryChange($event)">
+                                <option v-if="categories" v-for="cat in categories" v-bind:value="cat.categoryID">
+                                    {{cat.name}}
+                                </option>
                             </select>
 
-                            <select v-model="batchSubCategory" style="width: 30%;" @change="onBatchSubCategoryChange($event)" >
-                                <option v-if="subCategories1" v-for="subcat in subCategories1" v-bind:value="subcat.subCategoryID">{{subcat.name}}</option>
+                            <select v-model="batchSubCategory" style="width: 30%;"
+                                    @change="onBatchSubCategoryChange($event)">
+                                <option v-if="subCategories1" v-for="subcat in subCategories1"
+                                        v-bind:value="subcat.subCategoryID">{{subcat.name}}
+                                </option>
                             </select>
 
-                            <select v-model="batchSubSubCategory" style="width: 30%;" @change="onBatchSubSubCategoryChange($event)">
-                                <option v-if="subSubCategories1" v-for="subsubcat in subSubCategories1" v-bind:value="subsubcat.subSubCategoryID">{{subsubcat.name}}</option>
+                            <select v-model="batchSubSubCategory" style="width: 30%;"
+                                    @change="onBatchSubSubCategoryChange($event)">
+                                <option v-if="subSubCategories1" v-for="subsubcat in subSubCategories1"
+                                        v-bind:value="subsubcat.subSubCategoryID">{{subsubcat.name}}
+                                </option>
                             </select>
                         </div>
                         <p v-if="errors_movemodal.length">
@@ -91,6 +100,34 @@
         </div>
     </div>
 
+    <div class="modal fade" id="changeCategoryImage" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" @submit.prevent="changeImageAction">
+                    <div class="modal-body">
+                        <input type="hidden" v-model="category_image.category_id" name="id">
+                        <input type="hidden" v-model="category_image.category_type" name="type">
+                        <div class="form-outline form-white">
+                            <input type="file" id="category_image" @change="selectNewImgForCategory"
+                                   class="form-control" name="file"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="mt-3 row" v-if="categoryData.length">
         <div v-for="(item, index) in categoryData" :key="index" class="col-md-4 col-sm-6 col-xs-12 mt-3">
             <div class="card">
@@ -119,8 +156,40 @@
                 </div>
                 <div class="card-body d-flex align-items-center">
                     <h3 class="card-title">{{item.name}}</h3>
-                    <button type="button" class="btn btn-danger waves-effect btn-sm ml-auto"
-                            @click.prevent="deleteCategory(item.categoryID)"><i class="fas fa-trash-alt"></i></button>
+
+
+                    <template v-if="item.subSubCategoryID && item.subCategoryID && item.categoryID">
+                        <button type="button" class="btn btn-danger waves-effect btn-sm ml-auto"
+                                @click.prevent="deleteCategory(item._id,'subSubCategory')"><i
+                                    class="fas fa-trash-alt"></i></button>
+
+                        <button type="button" class="btn btn-primary waves-effect btn-sm ml-auto"
+                                @click.prevent="changeImage(item._id,'subSubCategory')"><i
+                                    class="fas fa-images mr-1"></i></button>
+                    </template>
+
+                    <template v-if="!item.subSubCategoryID && item.subCategoryID && item.categoryID">
+                        <button type="button" class="btn btn-danger waves-effect btn-sm ml-auto"
+                                @click.prevent="deleteCategory(item._id,'subCategory')"><i class="fas fa-trash-alt"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-primary waves-effect btn-sm ml-auto"
+                                @click.prevent="changeImage(item._id,'subCategory')"><i class="fas fa-images mr-1"></i>
+                        </button>
+                    </template>
+
+                    <template v-if="!item.subSubCategoryID && !item.subCategoryID && item.categoryID">
+                        <button type="button" class="btn btn-danger waves-effect btn-sm ml-auto"
+                                @click.prevent="deleteCategory(item._id,'category')"><i class="fas fa-trash-alt"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-primary waves-effect btn-sm ml-auto"
+                                @click.prevent="changeImage(item._id,'category')"><i class="fas fa-images mr-1"></i>
+                        </button>
+
+                    </template>
+
+
                 </div>
             </div>
         </div>
@@ -131,8 +200,10 @@
         <h1 class="w-100 mt-3 pl-3 border-bottom text-info" v-if="productsData.length">Products</h1>
 
         <div class="col-md-12">
-            <label v-if="checkedAlbums.length">{{checkedAlbums.length}} item(s) selected  </label>
-            <button  data-toggle="modal" data-target="#moveModal"  v-if="checkedAlbums.length " class="btn btn-blue btn-rounded btn-md">Move to...</button>
+            <label v-if="checkedAlbums.length">{{checkedAlbums.length}} item(s) selected </label>
+            <button data-toggle="modal" data-target="#moveModal" v-if="checkedAlbums.length "
+                    class="btn btn-blue btn-rounded btn-md">Move to...
+            </button>
             <br/><br/>
         </div>
 
@@ -151,7 +222,7 @@
                     <ul class="list-unstyled list-inline font-small m-0">
 
                         <input type="text" class="small list-inline-item pr-2 float-left ml-1" style="width: 63%;"
-                               v-model="item.name"  @change="onAlbumNameChange($event, item._id)"/>
+                               v-model="item.name" @change="onAlbumNameChange($event, item._id)"/>
                         <!--                          -->
 
 
@@ -160,7 +231,9 @@
                         </li>
 
                         <li class="list-inline-item float-right mr-2">
-                            <p class="white-text small"><i class="fas fa-trash-alt" @click.prevent="deleteAlbum(item._id)" style="cursor: pointer;"></i></p>
+                            <p class="white-text small"><i class="fas fa-trash-alt"
+                                                           @click.prevent="deleteAlbum(item._id)"
+                                                           style="cursor: pointer;"></i></p>
                             <!--                                                       @click.prevent="deleteAlbum(item._id)" -->
 
                         </li>
@@ -216,30 +289,66 @@
                 currentPage: 1,
                 totalPage: 0,
                 term: '',
-                checkedAlbums:[],
-                categories:[],
-                subCategories:[],
-                subSubCategories:[],
+                checkedAlbums: [],
+                categories: [],
+                subCategories: [],
+                subSubCategories: [],
                 subCategories1: [],
                 subSubCategories1: [],
-                batchCategory:'',
-                batchSubCategory:'',
-                batchSubSubCategory:'',
-                errors_movemodal:[],
-
+                batchCategory: '',
+                batchSubCategory: '',
+                batchSubSubCategory: '',
+                errors_movemodal: [],
+                category_image: {
+                    category_id: '',
+                    category_type: '',
+                    file: null
+                }
 
             }
         },
         mounted() {
             const self = this
             setTimeout(function () {
-               self.get_categories()
+                self.get_categories()
                 self.get_products()
                 self.getCategories()
             }, 200)
 
         },
         methods: {
+
+            selectNewImgForCategory() {
+
+            },
+            changeImageAction: function () {
+
+                let formData = new FormData();
+                formData.append('id', this.category_image.category_id);
+                formData.append('type', this.category_image.category_type);
+                let image = $('#category_image').prop('files')[0];
+
+                console.log(image)
+                formData.append('image',image);
+                $.ajax({
+                    method: "POST",
+                    url: `/api/categories/update-image`,
+                    data: formData,
+                    processData: false,
+                    contentType: false
+                }).done((res) => {
+
+                    location.reload()
+                });
+                console.log();
+            },
+            changeImage(id, type) {
+
+                this.category_image.category_id = id;
+                this.category_image.category_type = type;
+                $('#changeCategoryImage').modal('show')
+
+            },
             openLoader() {
                 this.loader = this.$loading.show({
                     loader: 'dots',
@@ -286,8 +395,8 @@
 
                 let min = this.currentPage - 4;
                 let max = this.currentPage + 4;
-                if ( this.currentPage  <4){
-                     max =8;
+                if (this.currentPage < 4) {
+                    max = 8;
                 }
 
                 for (let x = min; x <= max; x++) {
@@ -297,7 +406,7 @@
                 }
                 return array;
             },
-            deleteCategory(id) {
+            deleteCategory(id, type) {
                 swal({
                     title: "Confirm",
                     text: "Are you sure to delete this Item?",
@@ -307,12 +416,13 @@
                     .then((willDelete) => {
                         if (willDelete) {
                             $.ajax({
-                                url: `deleteCategory/${id}`,
-                                method: 'GET'
+                                url: `/api/categories/${id}`,
+                                method: 'delete',
+                                data: {
+                                    type: type
+                                }
                             }).done(async (res) => {
-                                this.categoryData = this.categoryData.filter(x => {
-                                    return x.categoryID != id
-                                })
+                               location.reload()
                             })
                         }
                     }).catch((err) => {
@@ -330,10 +440,10 @@
                         console.log(self.categoryData)
                     },
                     beforeSend: function () {
-                       // self.openLoader();
+                        // self.openLoader();
                     },
                     complete: function () {
-                       // self.loader.hide();
+                        // self.loader.hide();
                     }
                 });
 
@@ -368,92 +478,92 @@
                     this.get_categories()
                 }
             },
-            getCategories(){
+            getCategories() {
                 $.ajax({
-                    method:"GET",
-                    url:'/getCategory'
-                }).done(res=>{
-                    if(res.status){
+                    method: "GET",
+                    url: '/getCategory'
+                }).done(res => {
+                    if (res.status) {
                         this.categories = res.data;
-                    }else{
+                    } else {
                         console.log("Error occupied in getCategory function of productView.ejs.");
                     }
                     console.log("this is the result of the request:---", res);
                 })
             },
-            getSubCategories(categoryID, flag){
+            getSubCategories(categoryID, flag) {
                 $.ajax({
-                    method:"POST",
-                    url:'/getSubCategory',
-                    data:{
+                    method: "POST",
+                    url: '/getSubCategory',
+                    data: {
                         categoryID: categoryID
                     }
-                }).done(res=>{
-                    if(res.status){
-                        if(flag){
-                            this.subCategories =  res.data;
-                        }else{
+                }).done(res => {
+                    if (res.status) {
+                        if (flag) {
+                            this.subCategories = res.data;
+                        } else {
                             this.subCategories1 = res.data;
                         }
 
-                    }else{
+                    } else {
                         console.log("Error occupied in getSubCategory function of productView.ejs");
                     }
                 })
             },
-            getSubSubCategories(categoryID, subCategoryID, flag){
+            getSubSubCategories(categoryID, subCategoryID, flag) {
                 $.ajax({
-                    method:"POST",
-                    url:'/getSubSubCategory',
-                    data:{
-                        categoryID:categoryID,
+                    method: "POST",
+                    url: '/getSubSubCategory',
+                    data: {
+                        categoryID: categoryID,
                         subCategoryID: subCategoryID
                     }
-                }).done(res=>{
-                    if(res.status){
-                        if(flag){
+                }).done(res => {
+                    if (res.status) {
+                        if (flag) {
                             this.subSubCategories = res.data;
-                        }else{
+                        } else {
                             this.subSubCategories1 = res.data;
                         }
 
-                    }else{
+                    } else {
                         console.log("Error occupied in getSubSubCategory function of productView.ejs");
 
                     }
                 })
             },
-            onBatchCategoryChange(event){
+            onBatchCategoryChange(event) {
                 this.getSubCategories(event.target.value, false);
                 this.subSubCategories1 = [];
                 this.batchSubCategory = '';
                 this.batchSubSubCategory = '';
                 this.errors_movemodal = [];
             },
-            onBatchSubCategoryChange(event){
+            onBatchSubCategoryChange(event) {
                 this.getSubSubCategories(this.batchCategory, event.target.value, false);
                 this.batchSubSubCategory = '';
                 this.errors_movemodal = [];
             },
-            onBatchSubSubCategoryChange(event){
+            onBatchSubSubCategoryChange(event) {
                 console.log("---Batch SubSubCategory path changed into---", this.batchCategory, this.batchSubCategory, event.target.value);
                 this.errors_movemodal = [];
             },
-            savePath(){
+            savePath() {
                 let categoryID = this.batchCategory;
                 let subCategoryID = this.batchSubCategory;
                 let subSubCategoryID = this.batchSubSubCategory;
                 this.errors_movemodal = [];
-                if(!categoryID){
+                if (!categoryID) {
                     this.errors_movemodal.push("Please select Category.");
                     this.errors_movemodal.push("Please select SubCategory.");
                     this.errors_movemodal.push("Please select SubSubCategory.");
-                }else if(!subCategoryID){
+                } else if (!subCategoryID) {
                     this.errors_movemodal.push("Please select SubCategory.");
                     this.errors_movemodal.push("Please select SubSubCategory.");
-                }else if(!subSubCategoryID){
+                } else if (!subSubCategoryID) {
                     this.errors_movemodal.push("Please select SubSubCategory.");
-                }else{
+                } else {
                     console.log("this is savePatch() function", this.checkedAlbums, categoryID, subCategoryID, subSubCategoryID);
                     let selectedAlbums = JSON.stringify(this.checkedAlbums);
                     this.openLoader();
@@ -474,23 +584,23 @@
                     })
                 }
             },
-            onAlbumNameChange(event, _id){
+            onAlbumNameChange(event, _id) {
                 let name = event.target.value;
                 $.ajax({
-                    method:"POST",
-                    url:'/setAlbumName',
-                    data:{
+                    method: "POST",
+                    url: '/setAlbumName',
+                    data: {
                         _id, name
                     }
-                }).done(res=>{
-                    if(res.status){
+                }).done(res => {
+                    if (res.status) {
                         console.log(res.msg);
-                    }else{
+                    } else {
                         console.log(res.msg);
                     }
                 })
             },
-            deleteAlbum(id){
+            deleteAlbum(id) {
                 swal({
                     title: "Confirm",
                     text: "Are you sure to delete this Album?",
@@ -503,7 +613,7 @@
                                 url: `/api/products/${id}`,
                                 method: 'POST'
                             }).done(async (res) => {
-                                if(res.status){
+                                if (res.status) {
                                     location.reload();
                                     console.log(res.msg);
                                 }

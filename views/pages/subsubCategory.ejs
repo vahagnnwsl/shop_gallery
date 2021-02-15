@@ -11,6 +11,34 @@
       </ol>
     </nav>
   </div>
+  <div class="modal fade" id="changeCategoryImage" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Change image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="post" @submit.prevent="changeImageAction">
+          <div class="modal-body">
+            <input type="hidden" v-model="category_image.category_id" name="id">
+            <input type="hidden" v-model="category_image.category_type" name="type">
+            <div class="form-outline form-white">
+              <input type="file" id="category_image" @change="selectNewImgForCategory"
+                     class="form-control" name="file"/>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="subSubCategoryCreateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -72,6 +100,9 @@
           <h3 class="card-title">{{item.name}}</h3>
           <button type="button" class="btn btn-danger waves-effect btn-sm ml-auto"
             @click.prevent="deleteSubSubCategory(item.subSubCategoryID)"><i class="fas fa-trash-alt"></i></button>
+          <button type="button" class="btn btn-primary waves-effect btn-sm ml-auto"
+                  @click.prevent="changeImage(item._id,'subSubCategory')"><i class="fas fa-images mr-1"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -90,7 +121,12 @@
         href: '',
         categoryName: '',
         subCategoryName: '',
-        searchSubSubCategory:''
+        searchSubSubCategory:'',
+        category_image: {
+          category_id: '',
+          category_type: '',
+          file: null
+        }
       }
     },
     computed:{
@@ -99,6 +135,37 @@
         }
       },
     methods: {
+      selectNewImgForCategory() {
+
+      },
+      changeImageAction: function () {
+
+        let formData = new FormData();
+        formData.append('id', this.category_image.category_id);
+        formData.append('type', this.category_image.category_type);
+        let image = $('#category_image').prop('files')[0];
+
+        console.log(image)
+        formData.append('image',image);
+        $.ajax({
+          method: "POST",
+          url: `/api/categories/update-image`,
+          data: formData,
+          processData: false,
+          contentType: false
+        }).done((res) => {
+
+          location.reload()
+        });
+        console.log();
+      },
+      changeImage(id, type) {
+
+        this.category_image.category_id = id;
+        this.category_image.category_type = type;
+        $('#changeCategoryImage').modal('show')
+
+      },
       openLoader() {
         this.loader = this.$loading.show({
           loader: 'dots',
