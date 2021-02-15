@@ -115,7 +115,7 @@
                         <input type="hidden" v-model="category_image.category_id" name="id">
                         <input type="hidden" v-model="category_image.category_type" name="type">
                         <div class="form-outline form-white">
-                            <input type="file" id="category_image" @change="selectNewImgForCategory"
+                            <input type="file" id="category_image" required @change="selectNewImgForCategory"
                                    class="form-control" name="file"/>
                         </div>
                     </div>
