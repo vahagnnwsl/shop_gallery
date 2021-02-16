@@ -20,10 +20,31 @@ class ApiController {
 
         let categories = await categoryModel.find(q);
         let subCategories = await subCategoryModel.find(q);
-        let subSubCategories = await subSubCategoryModel.find(q);
 
-        const result = [...categories, ...subCategories, ...subSubCategories];
-        // const result = [...categories];
+        let result = [];
+
+        if (req.query.type) {
+
+            for (var x in categories) {
+
+                for (let y in subCategories) {
+                      if (categories[x].categoryID === subCategories[y].categoryID){
+                          categories[x].sub.push(subCategories[y])
+                      }
+
+                }
+
+            }
+
+            result = [...categories];
+
+        } else {
+            let subCategories = await subCategoryModel.find(q);
+            let subSubCategories = await subSubCategoryModel.find(q);
+            result = [...categories, ...subCategories, ...subSubCategories];
+        }
+
+
 
         res.json({categories: result});
     }
@@ -73,7 +94,7 @@ class ApiController {
             model = await subSubCategoryModel.findById(req.params.id)
         }
 
-         console.log(model)
+        console.log(model)
         await model.delete()
         res.json({status: true});
 
@@ -98,11 +119,17 @@ class ApiController {
         await bunnyStorage.upload(image, key);
 
 
-
         model.imageUrl = `https://fashinbutikskw.b-cdn.net/${key}`
         await model.save();
 
         res.json({status: `${process.env.PULL_ZONE_URL}${key}`});
+
+    }
+
+
+    async getMainCategories(req, res) {
+        let categories = await categoryModel.find()
+        res.json({categories: categories});
 
     }
 

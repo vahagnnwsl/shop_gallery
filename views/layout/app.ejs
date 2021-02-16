@@ -34,78 +34,102 @@
 </head>
 
 <body>
-    <!--Navbar -->
-    <!-- <nav class="mb-1 navbar navbar-expand-lg navbar-dark info-color p-0" id="navbar">
-        <a class="navbar-brand ml-3" href="/"><img src="/img/logo.png" alt="logo" width="110px"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
-            aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">
-                        <i class="fas fa-house-damage"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item dropdown" style="margin-left: auto;">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenu" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user"></i> Profile </a>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="navbarDropdownMenu">
-                        <a class="dropdown-item" href="#">My account</a>
-                        <a class="dropdown-item" href="/users/logout">Log out</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav> -->
-    <!--/.Navbar -->
-    <nav class="mb-4 navbar navbar-expand-lg navbar-dark info-color" id="navbar">
-        <a class="navbar-brand ml-3" href="/"><img src="/img/logo.png" alt="logo" width="110px"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
-            <ul class="navbar-nav ml-auto">
 
-                <li class="nav-item">
-                    <a class="nav-link" href="/">
-                        <i class="fas fa-house-damage"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> Profile </a>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">
-                        <a class="dropdown-item" href="#">My account</a>
-                        <a class="dropdown-item" href="/users/logout">Log out</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <!--Navbar-->
-    
-    <!-- Start your project here-->
-    <div class="main-wrap" id="root">
-        <!-- <button @click="open()">test</button> -->
-        <%-body -%>
-        <loading></loading>
-        <vue-snotify></vue-snotify>
+<nav class="navbar navbar-expand-lg navbar-dark bg-info">
+    <a class="navbar-brand" href="#"><img src="/img/logo.png" alt="logo" width="110px"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor01">
+
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown"  v-for="(item,index) in categories">
+                <a class="nav-link" @click="chekForRedirect(item)" :class="item.sub.length?'dropdown-toggle':''" :href="'/category/'+item.categoryID" :id="'navbarDropdown'+item.categoryID" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{item.name}}
+                </a>
+                <div class="dropdown-menu" :aria-labelledby="'navbarDropdown'+item.categoryID" v-if="item.sub.length">
+                    <a class="dropdown-item" :href="'/category/'+item.categoryID+'/subCategory/'+i.subCategoryID"  v-for="(i,y) in item.sub">{{i.name}}</a>
+                </div>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+
+            <li class="nav-item">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-house-damage"></i>Home
+                </a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> Profile </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">
+                    <a class="dropdown-item" href="#">My account</a>
+                    <a class="dropdown-item" href="/users/logout">Log out</a>
+                </div>
+            </li>
+        </ul>
     </div>
-    <script>
-        Vue.use(VueLoading);
-        Vue.use(Snotify)
-    </script>
-    <!-- End your project here-->
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="/js/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="/js/mdb.min.js"></script>
-    <!-- Your custom scripts (optional) -->
-    <script type="text/javascript" src="/javascripts/sweetalert.min.js"></script>
+</nav>
+
+<!--Navbar-->
+
+<!-- Start your project here-->
+<div class="main-wrap" id="root">
+    <!-- <button @click="open()">test</button> -->
+    <%- body -%>
+    <loading></loading>
+    <vue-snotify></vue-snotify>
+</div>
+<script>
+    new Vue({
+        el: "#navbarColor01",
+        data() {
+            return {
+                categories: []
+            }
+
+        },
+        mounted() {
+            this.get_categories()
+        },
+        methods: {
+               chekForRedirect(item) {
+                  if (!item.sub.length){
+                       window.location.href= '/category/'+item.categoryID
+                  }
+
+                  return ;
+
+               },
+               get_categories() {
+                   let self = this;
+
+                   $.ajax({
+                       method: "GET",
+                       url: '/api/categories?type=main',
+                   }).done(res => {
+                       self.categories = res.categories
+                   })
+               }
+
+        }
+    })
+</script>
+<script>
+    Vue.use(VueLoading);
+    Vue.use(Snotify)
+</script>
+<!-- End your project here-->
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="/js/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="/js/mdb.min.js"></script>
+<!-- Your custom scripts (optional) -->
+<script type="text/javascript" src="/javascripts/sweetalert.min.js"></script>
 </body>
 
 </html>

@@ -12,7 +12,12 @@ var category = mongoose.Schema({
     imageUrl: {
         type: String,
         required: true
+    },
+    sub:{
+        type: Array,
+        required: false
     }
+
 }
 )
 module.exports = mongoose.model('category', category);
