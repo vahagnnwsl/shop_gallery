@@ -31,6 +31,14 @@
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+    <style>
+        @media only screen and (min-width: 480px) {
+            #media__menu {
+                display: none;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
@@ -43,7 +51,7 @@
 
     <div class="collapse navbar-collapse" id="navbarColor01">
 
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto" id="media__menu">
             <li class="nav-item dropdown"  v-for="(item,index) in categories">
                 <a class="nav-link" @click="chekForRedirect(item)" :class="item.sub.length?'dropdown-toggle':''" :href="'/category/'+item.categoryID" :id="'navbarDropdown'+item.categoryID" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{item.name}}
