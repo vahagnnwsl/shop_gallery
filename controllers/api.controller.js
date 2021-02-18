@@ -14,13 +14,14 @@ class ApiController {
     async categories(req, res) {
 
         let q = {};
+        let new_q = {};
         if (req.query.term) {
             q.name = new RegExp(req.query.term, 'i');
+            new_q.name = new RegExp(req.query.term, 'i');
         }
         let categories = [];
 
         if (!req.user) {
-            let new_q = q;
             new_q.show = true;
             categories = await categoryModel.find(new_q);
 
