@@ -189,7 +189,10 @@
 
                     </template>
 
-
+                    <div class="material-switch pull-right" v-if="!item.subSubCategoryID && !item.subCategoryID && item.categoryID">
+                        <input :id="'someSwitchOption'+item._id" name="someSwitchOption001" :checked="item.show" @change="changeStatus(item._id,$event)" type="checkbox"/>
+                        <label :for="'someSwitchOption'+item._id" class="label-default"></label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -318,6 +321,14 @@
         },
         methods: {
 
+            changeStatus(id,e) {
+                $.ajax({
+                    method: "POST",
+                    url: `/api/categories/${id}`,
+                }).done((res) => {
+
+                });
+            },
             selectNewImgForCategory() {
 
             },

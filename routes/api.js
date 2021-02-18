@@ -10,6 +10,7 @@ router.post('/categories/update-image', upload.single('image'), apiController.up
 
 router.get('/categories', apiController.categories);
 router.delete('/categories/:id', apiController.deleteCategory);
+router.post('/categories/:id', apiController.updateCategory);
 
 router.get('/products', apiController.products);
 router.post('/products/:id', apiController.productDelete);

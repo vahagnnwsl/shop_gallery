@@ -17,8 +17,17 @@ class ApiController {
         if (req.query.term) {
             q.name = new RegExp(req.query.term, 'i');
         }
+        let categories = [];
 
-        let categories = await categoryModel.find(q);
+        if (!req.user) {
+            let new_q = q;
+            new_q.show = true;
+            categories = await categoryModel.find(new_q);
+
+        } else {
+            categories = await categoryModel.find(q);
+        }
+
         let subCategories = await subCategoryModel.find(q);
 
         let result = [];
@@ -28,9 +37,9 @@ class ApiController {
             for (var x in categories) {
 
                 for (let y in subCategories) {
-                      if (categories[x].categoryID === subCategories[y].categoryID){
-                          categories[x].sub.push(subCategories[y])
-                      }
+                    if (categories[x].categoryID === subCategories[y].categoryID) {
+                        categories[x].sub.push(subCategories[y])
+                    }
 
                 }
 
@@ -43,7 +52,6 @@ class ApiController {
             let subSubCategories = await subSubCategoryModel.find(q);
             result = [...categories, ...subCategories, ...subSubCategories];
         }
-
 
 
         res.json({categories: result});
@@ -130,6 +138,22 @@ class ApiController {
     async getMainCategories(req, res) {
         let categories = await categoryModel.find()
         res.json({categories: categories});
+
+    }
+
+    async updateCategory(req, res) {
+        let {id} = req.params;
+        let category = await categoryModel.findById(id);
+
+        if (category.show) {
+            category.show = false;
+        } else {
+            category.show = true;
+        }
+
+        await category.save();
+
+        res.json({status:  true});
 
     }
 
