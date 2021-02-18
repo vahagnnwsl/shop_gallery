@@ -65,17 +65,16 @@ class ApiController {
         let q = {
             categoryID: {"$ne": null},
             subCategoryID: {"$ne": null},
-            subSubCategoryID: {"$ne": null}
+            subSubCategoryID: {"$ne": null},
+            $or: [
+                { name: new RegExp(req.query.term, 'i' ) },
+                { description: new RegExp(req.query.term, 'i') },
+            ]
         };
 
-        if (req.query.term) {
-
-            q.name = new RegExp(req.query.term, 'i');
 
 
-        }
-
-        products = await productsModel.paginate(q, {
+        products = await productsModel.paginate( q, {
             offset: (page - 1) * LIMIT,
             limit: LIMIT
         }, function (err, result) {
