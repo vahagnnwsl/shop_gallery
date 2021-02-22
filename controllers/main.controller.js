@@ -86,11 +86,15 @@ class mainController {
     // }
 
     async getProducts(req, res) {
+        console.log(44444)
         let { categoryID, subCategoryID, subSubCategoryID, page, name } = req.body;
         page = parseInt(page)
-        let total = await productsModel.find({ categoryID, subCategoryID, subSubCategoryID });
+        let total = await productsModel.find({ categoryID, subCategoryID, subSubCategoryID, $or: [
+                { name: new RegExp(name, 'i' ) },
+                { description: new RegExp(name, 'i') },
+            ] });
         let products = [];
-        let filtered = total.filter(item => item.name.toLowerCase().includes(name) == true);
+        // let filtered = total.filter(item => item.name.toLowerCase().includes(name) == true);
         if (page == 1) {
             let category = await categoryModel.findOne({ categoryID })
             let subCategory = await subCategoryModel.findOne({ subCategoryID });
@@ -102,14 +106,18 @@ class mainController {
             }
             let productsCount = 0;
             
-            if(!name){
-                productsCount = total.length;
-                products = total.slice(0, 100);
-            }else{
+            // if(!name){
+            //     productsCount = total.length;
+            //     products = total.slice(0, 100);
+            // }else{
+            //
+            //     productsCount = total.length;
+            //     products = filtered.slice(0, 100);
+            // }
 
-                productsCount = filtered.length;
-                products = filtered.slice(0, 100);
-            }
+            productsCount = total.length;
+            products = total.slice(0, 100);
+
             //let productsCount = await productsModel.find({ categoryID, subCategoryID, subSubCategoryID }).countDocuments()
             //let products = await productsModel.find({ categoryID, subCategoryID, subSubCategoryID }).limit(24)
             res.json({ status: true, data: products, productsCount, breadcrumb });
