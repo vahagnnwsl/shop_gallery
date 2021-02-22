@@ -582,7 +582,7 @@
                 })
             },
             viewDetail(item, index) {
-                this.index = index;
+                this.index = item._id;
                 this.detailData = item;
                 this.detailMode = true;
                 setTimeout(() => {
@@ -657,6 +657,29 @@
                 this.batchSubCategory = this.subCategoryID;
                 this.batchSubSubCategory = this.subSubCategoryID;
             }, 200);
+
+            let urlParams = new URLSearchParams(window.location.search);
+            let _id = urlParams.get('p');
+
+            if (_id){
+                let self = this;
+
+                setTimeout(() => {
+
+                    $.ajax({
+                        method: "GET",
+                        url: '/api/products/'+_id,
+                        success:function (data) {
+                            let product = data.product;
+                            self.viewDetail(product,0)
+                        }
+
+                    })
+
+
+                }, 300)
+
+            }
         },
     })
 </script>

@@ -5,22 +5,26 @@
             <ol class="breadcrumb cyan lighten-4">
                 <li class="breadcrumb-item"><a class="" href="/">Home</a></li>
                 <li class="breadcrumb-item"><a class=""
-                        :href="'/category/' + categoryID">{{breadcrumb.category.name}}</a></li>
-                <li class="breadcrumb-item"><a class="" :href="'/category/' + categoryID + '/subCategory/' + subCategoryID">{{breadcrumb.subCategory.name}}</a></li>
+                                               :href="'/category/' + categoryID">{{breadcrumb.category.name}}</a></li>
+                <li class="breadcrumb-item"><a class=""
+                                               :href="'/category/' + categoryID + '/subCategory/' + subCategoryID">{{breadcrumb.subCategory.name}}</a>
+                </li>
                 <li class="breadcrumb-item active">{{breadcrumb.subSubCategory.name}}/</li>
-            </ol>   
+            </ol>
         </nav>
     </div>
 
     <div class="text-left">
-        <input type="text" v-model="searchAlbum" id="searchAlbum" name="searchAlbum"  @change="onSearchAlbumNameChange($event)" placeholder="Search album...">
+        <input type="text" v-model="searchAlbum" id="searchAlbum" name="searchAlbum"
+               @change="onSearchAlbumNameChange($event)" placeholder="Search album...">
     </div>
     <br>
     <div class="row" v-show="!detailMode">
         <div v-for="(item, index) in products" :key="index" class="col-6 col-sm-4 col-md-2 mb-2">
             <div class="card">
                 <div class="view overlay">
-                    <img class="card-img-top" :src="item.images[item.cover!==undefined?item.cover:0]" height="170" alt="Card image cap">
+                    <img class="card-img-top" :src="item.images[item.cover!==undefined?item.cover:0]" height="170"
+                         alt="Card image cap">
                     <a @click.prevent="viewDetail(item, index)">
                         <div class="mask rgba-white-slight"></div>
                     </a>
@@ -47,7 +51,8 @@
         <nav aria-label="Page navigation example" class="m-auto">
             <ul class="pagination pagination-circle pg-blue">
                 <li class="page-item" :class="currentPage == 1 ? 'disabled': ''"><a class="page-link"
-                        @click.prevent="setPage(1)">First</a></li>
+                                                                                    @click.prevent="setPage(1)">First</a>
+                </li>
                 <li class="page-item" :class="currentPage == 1 ? 'disabled': ''">
                     <a class="page-link" aria-label="Previous" @click.prevent="setPage(currentPage - 1)">
                         <span aria-hidden="true">&laquo;</span>
@@ -63,35 +68,43 @@
                     </a>
                 </li>
                 <li class="page-item" :class="currentPage == totalPageNum ? 'disabled': ''"><a class="page-link"
-                        @click.prevent="setPage(totalPageNum)">Last</a></li>
+                                                                                               @click.prevent="setPage(totalPageNum)">Last</a>
+                </li>
             </ul>
         </nav>
     </div>
-    
+
     <div class="detail-section" v-show="detailMode" v-if="detailMode" class="col-6 col-sm-4 col-md-2 mb-2">
         <div class="row">
             <button class="btn btn-primary ml-auto btn-rounded" @click.prevent="viewProducts()">Go back</button>
         </div>
         <div class="row">
             <div class="col-md-2 col-sm-4 col-xs-12">
-                <img :src="detailData.images[detailData.cover!==undefined?detailData.cover:0]" alt="thumbnail" width="100%">
+                <img :src="detailData.images[detailData.cover!==undefined?detailData.cover:0]" alt="thumbnail"
+                     width="100%">
             </div>
             <div class="col-md-10 col-xs-12">
                 <h3>{{detailData.name}} | {{detailData.images.length}}</h3>
                 <p>{{detailData.description}}</p>
                 <div class="row">
                     <div class="col-xs-6">
-                        <label  v-if="detailData.tag" for="tagname">&nbsp;&nbsp;&nbsp;Search albums by tag:&nbsp;&nbsp;</label>
-                        <button class="btn btn-purple btn-rounded" v-if="detailData.tag" @click.prevent="searchByTag(detailData.tag)">{{detailData.tag}}</button>
+                        <label v-if="detailData.tag" for="tagname">&nbsp;&nbsp;&nbsp;Search albums by
+                            tag:&nbsp;&nbsp;</label>
+                        <button class="btn btn-purple btn-rounded" v-if="detailData.tag"
+                                @click.prevent="searchByTag(detailData.tag)">{{detailData.tag}}
+                        </button>
                     </div>
                     <div class="btn-group ml-auto col-xs-6" role="group" aria-label="options">
                         <button type="button" class="btn btn-purple btn-rounded" @click.prevent="changeView('col-2')"><i
-                                class="fas fa-icons pr-2"></i>
-                            Small</button>
+                                    class="fas fa-icons pr-2"></i>
+                            Small
+                        </button>
                         <button type="button" class="btn btn-purple btn-rounded" @click.prevent="changeView('col-3')"><i
-                                class="far fa-images pr-2"></i>Detail</button>
+                                    class="far fa-images pr-2"></i>Detail
+                        </button>
                         <button type="button" class="btn btn-purple btn-rounded"
-                            @click.prevent="changeView('col-12')"><i class="far fa-image pr-2"></i></i>Big</button>
+                                @click.prevent="changeView('col-12')"><i class="far fa-image pr-2"></i></i>Big
+                        </button>
                     </div>
                 </div>
             </div>
@@ -129,25 +142,24 @@
                 subSubCategoryID: '',
                 loader: {},
                 index: 0,
-                error:'',
-                searchAlbum:'',
-                tag:'',
-                editCategory:'',
-                editSubCategory:'',
-                editSubSubCategory:'',
-                categories:'',
-                subCategories:'',
-                subSubCategories:'',
-                errors:[]
+                error: '',
+                searchAlbum: '',
+                tag: '',
+                editCategory: '',
+                editSubCategory: '',
+                editSubSubCategory: '',
+                categories: '',
+                subCategories: '',
+                subSubCategories: '',
+                errors: []
             }
         },
-        computed:{
-            filteredList(){
-              return this.products.filter(item=>item.name.toLowerCase().includes(this.searchAlbum.toLowerCase())==true)
+        computed: {
+            filteredList() {
+                return this.products.filter(item => item.name.toLowerCase().includes(this.searchAlbum.toLowerCase()) == true)
             }
         },
         methods: {
-            
             openLoader() {
                 this.loader = this.$loading.show({
                     loader: 'dots',
@@ -156,7 +168,7 @@
                     transparence: 0.5
                 });
             },
-            onSearchAlbumNameChange(event){
+            onSearchAlbumNameChange(event) {
                 let name = event.target.value;
                 console.log("search_albumname changed into this:", name);
                 this.getProducts(1);
@@ -164,13 +176,13 @@
             getProducts(page) {
                 this.openLoader()
                 $.ajax({
-                    method: "POST", 
+                    method: "POST",
                     url: `/getProducts`,
                     data: {
                         categoryID: this.categoryID,
                         subCategoryID: this.subCategoryID,
                         subSubCategoryID: this.subSubCategoryID,
-                        name:this.searchAlbum,
+                        name: this.searchAlbum,
                         page,
                     }
                 }).done(res => {
@@ -181,62 +193,64 @@
                             this.productsCount = res.productsCount;
                             let reminder = this.productsCount % 100 == 0 ? 0 : 1;
                             this.totalPageNum = Math.floor(this.productsCount / 100) + reminder
-                        };
+                        }
+                        ;
                         this.getPaginationArray(page);
                         this.loader.hide()
                     }
                 })
             },
-            searchByTag(tag){
-                location.href="/search?tag="+tag;
-                
+            searchByTag(tag) {
+                location.href = "/search?tag=" + tag;
+
             },
-            getCategories(){
+            getCategories() {
                 $.ajax({
-                    method:"GET",
-                    url:'/getCategory'
-                }).done(res=>{
-                    if(res.status){
+                    method: "GET",
+                    url: '/getCategory'
+                }).done(res => {
+                    if (res.status) {
                         this.categories = res.data;
-                    }else{
+                    } else {
                         console.log("Error occupied in getCategory function of productView.ejs.");
                     }
                     console.log("this is the result of the request:---", res);
                 })
             },
-            getSubCategories(categoryID){
+            getSubCategories(categoryID) {
                 $.ajax({
-                    method:"POST",
-                    url:'/getSubCategory',
-                    data:{
+                    method: "POST",
+                    url: '/getSubCategory',
+                    data: {
                         categoryID: categoryID
                     }
-                }).done(res=>{
-                    if(res.status){
+                }).done(res => {
+                    if (res.status) {
                         this.subCategories = res.data;
-                    }else{
+                    } else {
                         console.log("Error occupied in getSubCategory function of productView.ejs");
                     }
                 })
             },
-            getSubSubCategories(categoryID, subCategoryID){
+            getSubSubCategories(categoryID, subCategoryID) {
                 $.ajax({
-                    method:"POST",
-                    url:'/getSubSubCategory',
-                    data:{
-                        categoryID:categoryID,
+                    method: "POST",
+                    url: '/getSubSubCategory',
+                    data: {
+                        categoryID: categoryID,
                         subCategoryID: subCategoryID
                     }
-                }).done(res=>{
-                    if(res.status){
+                }).done(res => {
+                    if (res.status) {
                         this.subSubCategories = res.data;
-                    }else{
+                    } else {
                         console.log("Error occupied in getSubSubCategory function of productView.ejs");
                     }
                 })
             },
             viewDetail(item, index) {
-                this.index = index;
+                console.log(item)
+                this.index = item._id;
                 this.detailData = item;
                 this.detailMode = true;
                 setTimeout(() => {
@@ -306,6 +320,33 @@
                 this.editSubCategory = this.subCategoryID;
                 this.editSubSubCategory = this.subSubCategoryID;
             }, 200);
+
+            let urlParams = new URLSearchParams(window.location.search);
+            let _id = urlParams.get('p');
+
+            if (_id){
+                let self = this;
+
+                setTimeout(() => {
+
+                    $.ajax({
+                        method: "GET",
+                        url: '/api/products/'+_id,
+                        success:function (data) {
+                            let product = data.product;
+                            self.viewDetail(product,0)
+                        }
+
+                    })
+
+
+                }, 300)
+
+            }
+
+
+
+
         },
     })
 </script>

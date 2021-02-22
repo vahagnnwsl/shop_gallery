@@ -67,14 +67,13 @@ class ApiController {
             subCategoryID: {"$ne": null},
             subSubCategoryID: {"$ne": null},
             $or: [
-                { name: new RegExp(req.query.term, 'i' ) },
-                { description: new RegExp(req.query.term, 'i') },
+                {name: new RegExp(req.query.term, 'i')},
+                {description: new RegExp(req.query.term, 'i')},
             ]
         };
 
 
-
-        products = await productsModel.paginate( q, {
+        products = await productsModel.paginate(q, {
             offset: (page - 1) * LIMIT,
             limit: LIMIT
         }, function (err, result) {
@@ -153,36 +152,41 @@ class ApiController {
 
         await category.save();
 
-        res.json({status:  true});
+        res.json({status: true});
 
     }
 
-    async test(req,res) {
+    async test(req, res) {
         let categories = await categoryModel.find();
 
         for (let i in categories) {
             categories[i].url = `/category/${categories[i].categoryID}`;
-            await  categories[i].save()
+            await categories[i].save()
         }
 
         let subCategories = await subCategoryModel.find();
         for (let j in subCategories) {
             subCategories[j].url = `/category/${subCategories[j].categoryID}/subCategory/${subCategories[j].subCategoryID}`;
-            await  subCategories[j].save()
+            await subCategories[j].save()
         }
 
 
         let subSubCategories = await subSubCategoryModel.find();
         for (let k in subSubCategories) {
             subSubCategories[k].url = `/category/${subSubCategories[k].categoryID}/subCategory/${subSubCategories[k].subCategoryID}/subSubCategory/${subSubCategories[k].subSubCategoryID}`;
-            await  subSubCategories[k].save()
+            await subSubCategories[k].save()
         }
 
 
-
-        res.json({status:  categories});
+        res.json({status: categories});
 
     }
+
+    async getProduct(req, res) {
+
+        res.json({product: await productsModel.findById(req.params.id)})
+    }
+
 
 }
 

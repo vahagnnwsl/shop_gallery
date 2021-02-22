@@ -34,7 +34,7 @@
       <div class="card">
         <div class="view overlay">
           <img class="card-img-top" :src="item.images[item.cover!==undefined?item.cover:0]" height="170" alt="Card image cap">
-          <a :href="'/category/'+item.categoryID+'/subCategory/'+item.subCategoryID+'/subSubCategory/'+item.subSubCategoryID">
+          <a :href="'/category/'+item.categoryID+'/subCategory/'+item.subCategoryID+'/subSubCategory/'+item.subSubCategoryID+'?p='+item._id">
             <div class="mask rgba-white-slight"></div>
           </a>
         </div>
