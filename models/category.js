@@ -21,8 +21,18 @@ var category = mongoose.Schema({
             type: Boolean,
             required: false,
             default: true
+        },
+        url: {
+            type: String,
+            required: false
         }
-
     }
 )
+
+
+category.pre("save", async function (next) {
+    this.url = `/category/${this.categoryID}`;
+    next();
+});
+
 module.exports = mongoose.model('category', category);

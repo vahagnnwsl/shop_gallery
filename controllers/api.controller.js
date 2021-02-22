@@ -157,6 +157,33 @@ class ApiController {
 
     }
 
+    async test(req,res) {
+        let categories = await categoryModel.find();
+
+        for (let i in categories) {
+            categories[i].url = `/category/${categories[i].categoryID}`;
+            await  categories[i].save()
+        }
+
+        let subCategories = await subCategoryModel.find();
+        for (let j in subCategories) {
+            subCategories[j].url = `/category/${subCategories[j].categoryID}/subCategory/${subCategories[j].subCategoryID}`;
+            await  subCategories[j].save()
+        }
+
+
+        let subSubCategories = await subSubCategoryModel.find();
+        for (let k in subSubCategories) {
+            subSubCategories[k].url = `/category/${subSubCategories[k].categoryID}/subCategory/${subSubCategories[k].subCategoryID}/subSubCategory/${subSubCategories[k].subSubCategoryID}`;
+            await  subSubCategories[k].save()
+        }
+
+
+
+        res.json({status:  categories});
+
+    }
+
 }
 
 

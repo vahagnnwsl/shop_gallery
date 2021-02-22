@@ -16,7 +16,18 @@ var subCategory = mongoose.Schema({
     imageUrl: {
         type: String,
         required: true
+    },
+    url: {
+        type: String,
+        required: false
     }
+
 }
 )
+
+subCategory.pre("save", async function (next) {
+    this.url = `/category/${this.categoryID}/subCategory/${this.subCategoryID}`;
+    next()
+});
+
 module.exports = mongoose.model('subCategory', subCategory);
