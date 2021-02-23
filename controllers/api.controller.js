@@ -15,6 +15,8 @@ class ApiController {
 
         let q = {};
         let new_q = {};
+        let subSubCategories = [];
+        let subCategories2 = [];
         if (req.query.term) {
             q.name = new RegExp(req.query.term, 'i');
             new_q.name = new RegExp(req.query.term, 'i');
@@ -29,11 +31,11 @@ class ApiController {
             categories = await categoryModel.find(q);
         }
 
-        let subCategories = await subCategoryModel.find(q);
 
         let result = [];
 
         if (req.query.type) {
+            let subCategories = await subCategoryModel.find(q);
 
             for (var x in categories) {
 
@@ -41,17 +43,17 @@ class ApiController {
                     if (categories[x].categoryID === subCategories[y].categoryID) {
                         categories[x].sub.push(subCategories[y])
                     }
-
                 }
-
             }
-
             result = [...categories];
 
         } else {
-            let subCategories = await subCategoryModel.find(q);
-            let subSubCategories = await subSubCategoryModel.find(q);
-            result = [...categories, ...subCategories, ...subSubCategories];
+
+            if (req.query.term) {
+                subCategories2 =   await subCategoryModel.find(q);
+                subSubCategories =await subSubCategoryModel.find(q);
+            }
+            result = [...categories,...subCategories2,...subSubCategories];
         }
 
 
