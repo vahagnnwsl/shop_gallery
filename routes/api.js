@@ -19,6 +19,6 @@ router.post('/products/:id', apiController.productDelete);
 router.get('/products/:id', apiController.getProduct);
 
 
-// router.get('/test', apiController.test);
+router.get('/test', apiController.test);
 
 module.exports = router;
